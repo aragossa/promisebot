@@ -5,7 +5,7 @@ import time
 import schedule
 import telebot
 
-from telebot import types
+
 
 logger = telebot.logger
 telebot.logger.setLevel(logging.DEBUG)
@@ -40,7 +40,7 @@ def threadCheckNotifications():
 def threadUpdateNotifications():
     while True:
         schedule.run_pending()
-        updateNotifications ()
+        updateNotifications()
         time.sleep(1)
 
 
