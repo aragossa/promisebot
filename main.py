@@ -4,53 +4,50 @@ import time
 
 import schedule
 import telebot
-
-
-
+from menuhelper import 
 logger = telebot.logger
 telebot.logger.setLevel(logging.DEBUG)
 
 bot = telebot.TeleBot(botToken, threaded=True)
 
+
 @bot.message_handler(commands=['start'])
-def handleStart(m):
-    pass
-
-@bot.message_handler(content_types= 'text' )
-def simpleTextMessage(m):
+def handlestart(m):
     pass
 
 
-
-def checkNotifications ():
-    pass
-
-def updateNewNotifciations ():
+@bot.message_handler(content_types='text')
+def simpletextmessage(m):
     pass
 
 
-def threadCheckNotifications():
+def checknotifications():
+    pass
+
+
+def updatenewnotifciations():
+    pass
+
+
+def threadchecknotifications():
     while True:
         schedule.run_pending()
-        checkNotifications ()
+        checknotifications()
         time.sleep(1)
 
 
-
-def threadUpdateNotifications():
+def threadupdatenotifications():
     while True:
         schedule.run_pending()
-        updateNotifications()
+        updatenewnotifciations()
         time.sleep(1)
 
 
-th1 = threading.Thread(target=threadCheckNotifications, args=())
+th1 = threading.Thread(target=threadchecknotifications(), args=())
 th1.start()
 
-
-th2 = threading.Thread(target=threadUpdateNotifications, args=())
+th2 = threading.Thread(target=threadupdatenotifications(), args=())
 th2.start()
-
 
 while True:
     try:
