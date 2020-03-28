@@ -1,59 +1,49 @@
 import logging
-import threading
 import time
-
-import schedule
 import telebot
-import dbhelper
+from telebot import apihelper
 
-helper = dbhelper
-TOKEN = helper.getapitoken()
+import requesthelper
+from dbconnector import getapitoken, resetusersstate
+import menuhelper
+
+resetusersstate()
 logger = telebot.logger
+apihelper.proxy = {'https': 'https://Z6dnQZ:s1Pg8b@77.83.185.165:8000'}
 telebot.logger.setLevel(logging.DEBUG)
-
+TOKEN = getapitoken()
 bot = telebot.TeleBot(TOKEN, threaded=True)
 
 
 @bot.message_handler(commands=['start'])
 def handlestart(m):
-    pass
+    menuhelper.sendmainmenu (bot=bot, uid=m.chat.id)
 
 
 @bot.message_handler(content_types='text')
 def simpletextmessage(m):
-    pass
+    menuhelper.textmessagehandle(bot=bot, message=m)
 
 
-def checknotifications():
-    pass
+@bot.callback_query_handler(func=lambda call: call.data[:7] == 'select_')
+def sendmessagetoinputvalue(call):
+    selecteduser = call.data[7:]
+    requesthelper.sendmessagetoinputvalue (bot=bot, call=call, newstate='REQUEST_INPUT', selecteduser=selecteduser)
 
 
-def updatenewnotifciations():
-    pass
+@bot.callback_query_handler(func=lambda call: call.data[:8] == 'request_')
+def requesthandler(call):
+    action = call.data[8:14]
+    if action == 'nodate' or action == 'addate':
+        requesthelper.changerequestdatestate (bot=bot, call=call)
+    elif action == 'accept' or action == 'reject':
+        requesthelper.incomerequesthandler(bot=bot, call=call)
 
-
-def threadchecknotifications():
-    while True:
-        schedule.run_pending()
-        checknotifications()
-        time.sleep(1)
-
-
-def threadupdatenotifications():
-    while True:
-        schedule.run_pending()
-        updatenewnotifciations()
-        time.sleep(1)
 
 if __name__ == '__main__':
-    th1 = threading.Thread(target=threadchecknotifications(), args=())
-    th1.start()
-
-    th2 = threading.Thread(target=threadupdatenotifications(), args=())
-    th2.start()
-
     while True:
         try:
+            print ('Listerning...')
             bot.polling(none_stop=True)
         except Exception as e:
             time.sleep(5)

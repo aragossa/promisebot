@@ -1,8 +1,10 @@
 <component name="ProjectDictionaryState">
   <dictionary name="dozer">
     <words>
+      <w>dbhelper</w>
       <w>dblocation</w>
       <w>getcursor</w>
+      <w>getusertype</w>
     </words>
   </dictionary>
 </component>
