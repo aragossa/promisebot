@@ -5,6 +5,7 @@ from telebot import apihelper
 
 import promisehelper
 import requesthelper
+import settingshelper
 from dbconnector import getapitoken, resetusersstate
 import menuhelper
 
@@ -48,6 +49,18 @@ def requesthandlerfin(call):
     promisehelper.promisehandlerfin(bot, call, action, promsieid)
 
 
+@bot.callback_query_handler(func=lambda call: call.data[:4] == 'new_')
+def updatesettings(call):
+    parameter = call.data[4:]
+    settingshelper.updatesetttings(bot=bot, call=call, parameter=parameter)
+
+
+
+@bot.callback_query_handler(func=lambda call: call.data == 'reset')
+def resetstatistics(call):
+    settingshelper.resetstatistics (bot=bot, call=call)
+
+
 print ('Listerning...')
 bot.polling(none_stop=True)
 #if __name__ == '__main__':
@@ -55,4 +68,4 @@ bot.polling(none_stop=True)
 #        try:
 #
 #        except Exception as e:
-#            time.sleep(5)
+#            time.sleep(15)

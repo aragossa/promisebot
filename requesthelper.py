@@ -1,7 +1,7 @@
 from dbconnector import Botuser
 import datetime
 
-from keyboards import getrecipientrequestkeyboard, getgroupusersinlinekeyboard, getnodateinlinekeyboard, \
+from keyboardhelper import getrecipientrequestkeyboard, getgroupusersinlinekeyboard, getnodateinlinekeyboard, \
     getdateinlinekeyboard
 
 

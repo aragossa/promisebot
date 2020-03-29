@@ -1,10 +1,12 @@
 import datetime
 
-from keyboards import getmainmenukeyboard
+import monitorhelper
+import settingshelper
+from keyboardhelper import getmainmenukeyboard
 from dbconnector import Botuser
 import requesthelper, promisehelper
 
-activeusersstate = ['REQUEST_INPUT', 'REQUEST_INPUT_DATE', 'REQUEST_INPUT_DATE_INPUT','PROMISE_INPUT']
+activeusersstate = ['REQUEST_INPUT', 'REQUEST_INPUT_DATE', 'REQUEST_INPUT_DATE_INPUT','PROMISE_INPUT', 'REJECT_REQUEST', 'COMPLITE_PROMISE', 'BREAK_PROMISE']
 
 
 def sendmainmenu(bot, uid):
@@ -33,9 +35,11 @@ def textmessagehandle(bot, message):
             user.resetuserstate()
         elif message.text == 'Монитор':
             user.resetuserstate()
+            monitorhelper.monitor(bot=bot, message=message)
         elif message.text == 'Настройки':
             if user.isadmin():
                 user.resetuserstate()
+                settingshelper.settingsmenu(bot=bot, message=message)
             else:
                 user.resetuserstate()
                 bot.send_message(chat_id=user.uid, text='Доступ ограничен')
@@ -82,5 +86,24 @@ def inputvaluehandler(bot, user, value):
 
     elif user.getuserstate() == 'PROMISE_INPUT':
         requesthelper.promiseinput(bot=bot, user=user, value=value)
+        user.resetuserstate()
+
+    elif user.getuserstate() == 'REJECT_REQUEST':
+        print (user.getuserstate())
+        print (value)
+        user.updatesetting(parameter='REJECT_REQUEST', value=value)
+        user.resetuserstate()
+
+    elif user.getuserstate() == 'COMPLITE_PROMISE':
+        print(user.getuserstate())
+        print(value)
+        user.updatesetting(parameter='COMPLITE_PROMISE', value=value)
+        user.resetuserstate()
+
+    elif user.getuserstate() == 'BREAK_PROMISE':
+        print(user.getuserstate())
+        print(value)
+        user.updatesetting(parameter='BREAK_PROMISE', value=value)
+        user.resetuserstate()
 
 

@@ -83,6 +83,14 @@ class Botuser():
             })
         return userlist
 
+    def getuserstat (self, userid):
+        with self.connection:
+            self.cursor.execute("""SELECT * FROM users_stat WHERE id = ?""",
+                                (userid,))
+            result = self.cursor.fetchone()
+            return result
+
+
     def getuserstate(self):
         with self.connection:
             self.cursor.execute("""SELECT state FROM users_stat WHERE id = ?""",
@@ -167,10 +175,10 @@ class Botuser():
             self.cursor.execute("""UPDATE
                                         users_stat
                                    SET
-                                        trust = trust - (SELECT value FROM settings WHERE name = 'REJECT_REQUEST')
+                                        trust = trust - (SELECT value FROM settings WHERE name = 'REJECT_REQUEST' AND group_id = (SELECT group_id FROM users WHERE id = ?))
                                    WHERE
                                         id = ?""",
-                                (self.uid,))
+                                (self.uid, self.uid,))
             self.cursor.execute("""SELECT user_id_give, user_id_get, request_text FROM promises WHERE id = ?""",
                                 (requestid,))
             return self.cursor.fetchone()
@@ -230,21 +238,48 @@ class Botuser():
         with self.connection:
             if action == 'accept':
                 promisestatus = 'COMPLITE'
-                self.cursor.execute("""UPDATE users_stat
-                                       SET trust = trust + (SELECT value FROM settings WHERE name = 'COMPLITE_PROMISE')
-                                       WHERE id = ?""",
-                                    (self.uid,))
+                self.cursor.execute("""UPDATE users_stat SET trust = trust + (SELECT value FROM settings WHERE name = 
+                'COMPLITE_PROMISE' AND group_id = (SELECT group_id FROM users WHERE id = ?)) WHERE id = ?""",
+                                    (self.uid, self.uid,))
             elif action == 'break':
                 promisestatus = 'BREAK'
-                self.cursor.execute("""UPDATE users_stat
-                                       SET trust = trust - (SELECT value FROM settings WHERE name = 'BREAK_PROMISE')
-                                       WHERE id = (SELECT user_id_give FROM promises WHERE id = ?)""",
-                                    (promiseid,))
+                self.cursor.execute("""UPDATE users_stat SET trust = trust - (SELECT value FROM settings WHERE name = 
+                'BREAK_PROMISE' AND group_id = (SELECT group_id FROM users WHERE id = ?)) WHERE id = (SELECT 
+                user_id_give FROM promises WHERE id = ?)""",
+                                    (self.uid, promiseid,)
+                                    )
             self.cursor.execute("""UPDATE promises SET promise_status = ? WHERE id = ?""",
                                 (promisestatus, promiseid,))
 
 
+    def getsetting (self):
+        with self.connection:
+            self.cursor.execute("""SELECT * FROM settings WHERE group_id = (SELECT group_id FROM users WHERE id = ?)""",
+                                (self.uid,))
+            return self.cursor.fetchall()
+
+    def resetstatistics (self):
+        with self.connection:
+            self.cursor.execute("""UPDATE users_stat
+                                    SET likes = 0, dislikes = 0, trust = 50
+                                    WHERE id IN (SELECT id FROM users WHERE group_id = (SELECT group_id FROM users WHERE id = ?));""",
+                                (self.uid,))
+            return self.cursor.fetchall()
+
+
+    def updatesetting (self, parameter, value):
+        with self.connection:
+            self.cursor.execute("""UPDATE settings
+                                    SET value = ?
+                                    WHERE name = ?
+                                    AND group_id = (SELECT group_id FROM users WHERE id = ?);""",
+                                (value, parameter, self.uid,))
+            return self.cursor.fetchall()
+
+
+
+
 if __name__ == '__main__':
     user = Botuser('556047985')
-    promiseid='2430ef31-fb0d-4a57-81cd-4af9a53eb1c1'
-    print(user.promisefin(promiseid=promiseid, action='accept'))
+    promiseid='2a3e4970-f9bc-41ce-942c-00d34b76b796'
+    print(user.resetstatistics())

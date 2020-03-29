@@ -1,11 +1,11 @@
 import datetime
 
-import keyboards
+import keyboardhelper
 from dbconnector import Botuser
 
 
 def promisehandler(bot, message, action):
-    keyboard = keyboards.getemptyinlinekeyboard()
+    keyboard = keyboardhelper.getemptyinlinekeyboard()
     user = Botuser(message.chat.id)
     promises = user.getactivepromisesme()
     if promises:
@@ -20,7 +20,7 @@ def promisehandler(bot, message, action):
             except ValueError:
                 promisedate = promise[3]
             promisesender = promise[4]
-            keyboard.add (keyboards.getpromsieinlinebutton(text=i, promiseid=promise_id, action=action))
+            keyboard.add (keyboardhelper.getpromsieinlinebutton(text=i, promiseid=promise_id, action=action))
             sendmessage = sendmessage + """\n{}. {}\nДата обещания: {}""".format(i, promisetext, promisedate)
             i += 1
         bot.send_message (chat_id=message.chat.id, text=sendmessage, reply_markup=keyboard)

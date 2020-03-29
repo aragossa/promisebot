@@ -58,6 +58,12 @@ def getrecipientrequestkeyboard(requestid):
     return keyboard
 
 
-def getrequestskeyboard(**kwargs):
-    for key, value in kwargs:
-        pass
+
+def getsettingskeyboard():
+    keyboard = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton(text='REJECT_REQUEST', callback_data='new_REJECT_REQUEST')
+    btn2 = types.InlineKeyboardButton(text='COMPLITE_PROMISE', callback_data='new_COMPLITE_PROMISE')
+    btn3 = types.InlineKeyboardButton(text='BREAK_PROMISE', callback_data='new_BREAK_PROMISE')
+    btn4 = types.InlineKeyboardButton(text='Обнуление статистики', callback_data='reset')
+    keyboard.add(btn1, btn2, btn3, btn4)
+    return keyboard
