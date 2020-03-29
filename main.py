@@ -3,6 +3,7 @@ import time
 import telebot
 from telebot import apihelper
 
+import promisehelper
 import requesthelper
 from dbconnector import getapitoken, resetusersstate
 import menuhelper
@@ -40,10 +41,18 @@ def requesthandler(call):
         requesthelper.incomerequesthandler(bot=bot, call=call)
 
 
-if __name__ == '__main__':
-    while True:
-        try:
-            print ('Listerning...')
-            bot.polling(none_stop=True)
-        except Exception as e:
-            time.sleep(5)
+@bot.callback_query_handler(func=lambda call: call.data[:8] == 'promise_')
+def requesthandlerfin(call):
+    action = call.data.split('_')[1]
+    promsieid = call.data.split('_')[2]
+    promisehelper.promisehandlerfin(bot, call, action, promsieid)
+
+
+print ('Listerning...')
+bot.polling(none_stop=True)
+#if __name__ == '__main__':
+#    while True:
+#        try:
+#
+#        except Exception as e:
+#            time.sleep(5)

@@ -1,6 +1,13 @@
 from telebot import types
 from dbconnector import Botuser
 
+def getemptyinlinekeyboard():
+    return types.InlineKeyboardMarkup()
+
+
+def getpromsieinlinebutton(action, promiseid, text):
+    return types.InlineKeyboardButton(text=text, callback_data=('{}_{}'.format(action, promiseid)))
+
 
 def getmainmenukeyboard(usertype):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -42,9 +49,15 @@ def getnodateinlinekeyboard():
     keyboard.add(btn)
     return keyboard
 
+
 def getrecipientrequestkeyboard(requestid):
     keyboard = types.InlineKeyboardMarkup()
     btn1 = types.InlineKeyboardButton(text='✅', callback_data='request_accept_{}'.format(requestid))
     btn2 = types.InlineKeyboardButton(text='❌', callback_data='request_reject_{}'.format(requestid))
     keyboard.add(btn1, btn2)
     return keyboard
+
+
+def getrequestskeyboard(**kwargs):
+    for key, value in kwargs:
+        pass

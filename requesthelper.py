@@ -35,10 +35,10 @@ def sendrequesttouser(bot, selecteduser, requestid):
     requestdata = user.getrequestinfo(requestid=requestid)
     reqesttext = requestdata[0]
     try:
-        reqestdate = datetime.datetime.strptime(requestdata[1], '%Y-%m-%d %H:%M:%S').strftime("%d.%m.%Y")
+        reqestdate = datetime.datetime.strptime(requestdata[2], '%Y-%m-%d %H:%M:%S').strftime("%d.%m.%Y")
     except ValueError:
-        reqestdate = requestdata[1]
-    requestsender = Botuser(requestdata[2]).getusername()
+        reqestdate = requestdata[2]
+    requestsender = Botuser(requestdata[4]).getusername()
     sendmessagetext = ('Запрос от {0}\n{1}\nДата обещания: {2}'.format (requestsender, reqesttext, reqestdate))
     keyboard = getrecipientrequestkeyboard(requestid=requestid)
     bot.send_message (chat_id=user.uid, text=sendmessagetext, reply_markup=keyboard)

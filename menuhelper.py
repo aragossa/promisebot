@@ -2,7 +2,7 @@ import datetime
 
 from keyboards import getmainmenukeyboard
 from dbconnector import Botuser
-import requesthelper
+import requesthelper, promisehelper
 
 activeusersstate = ['REQUEST_INPUT', 'REQUEST_INPUT_DATE', 'REQUEST_INPUT_DATE_INPUT','PROMISE_INPUT']
 
@@ -22,11 +22,13 @@ def textmessagehandle(bot, message):
     if user.isauthorized():
         if message.text == 'Запрос обещания':
             user.resetuserstate()
-            requesthelper.senduserlist(bot, message)
+            requesthelper.senduserlist(bot=bot, message=message)
         elif message.text == 'Подтвердить выполнение':
             user.resetuserstate()
+            promisehelper.promisehandler(bot=bot, message=message, action='promise_accept')
         elif message.text == 'Зафиксировать невыполнение':
             user.resetuserstate()
+            promisehelper.promisehandler(bot=bot, message=message, action='promise_break')
         elif message.text == 'Актуальные обещания':
             user.resetuserstate()
         elif message.text == 'Монитор':
@@ -36,7 +38,7 @@ def textmessagehandle(bot, message):
                 user.resetuserstate()
             else:
                 user.resetuserstate()
-                bot.send_message(user.uid, 'Доступ ограничен')
+                bot.send_message(chat_id=user.uid, text='Доступ ограничен')
         elif user.getuserstate() in activeusersstate:
             inputvaluehandler(bot=bot, user=user, value=message.text)
 
