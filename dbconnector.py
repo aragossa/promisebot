@@ -15,8 +15,7 @@ def resetusersstate():
     connection = sqlite3.connect('data/database.db')
     cursor = connection.cursor()
     with connection:
-        cursor.execute("""UPDATE users_stat SET state = 'MAIN_MENU' WHERE state IS NOT NULL""")
-        cursor.execute("""UPDATE users_stat SET selected_user = '' WHERE selected_user IS NOT NULL""")
+        cursor.execute("""UPDATE users_stat SET state = 'MAIN_MENU', selected_user = '', selected_promise = '' """)
 
 
 class Botuser():
@@ -110,9 +109,8 @@ class Botuser():
         connection = sqlite3.connect('data/database.db')
         cursor = connection.cursor()
         with connection:
-            cursor.execute("""UPDATE users_stat SET state = 'MAIN_MENU' WHERE id = ?""", (self.uid,))
-            cursor.execute("""UPDATE users_stat SET selected_user = '' WHERE id = ?""", (self.uid,))
-            cursor.execute("""UPDATE users_stat SET selected_promise = '' WHERE id = ?""", (self.uid,))
+            cursor.execute("""UPDATE users_stat SET state = 'MAIN_MENU', selected_user = '', selected_promise = ''  WHERE id = ?""", (self.uid,))
+
 
     def updateselecteduser(self, selecteduser):
         with self.connection:
@@ -192,6 +190,14 @@ class Botuser():
             self.cursor.execute("""SELECT user_id_give, user_id_get, promise_text FROM promises WHERE id = ?""",
                                 (requestid,))
             return self.cursor.fetchone()
+
+
+    def promisecancel(self, requestid):
+        with self.connection:
+            self.cursor.execute("""UPDATE promises SET promise_status = 'CANCEL' WHERE id = ?""",
+                                (requestid,))
+
+
 
     """ Обещания и запросы, где получатель user"""
 
@@ -276,10 +282,95 @@ class Botuser():
                                 (value, parameter, self.uid,))
             return self.cursor.fetchall()
 
+    def makemesuperuser(self):
+        with self.connection:
+            self.cursor.execute("""INSERT INTO superusers (id) VALUES(?);""",
+                                (self.uid,))
 
+
+    def issuperuser(self):
+        with self.connection:
+            self.cursor.execute("""SELECT id FROM superusers WHERE id = ?""",
+                                (self.uid,))
+        if self.cursor.fetchone():
+            return True
+        else:
+            return False
+
+    def getnewkey(self):
+        with self.connection:
+            self.cursor.execute("""INSERT INTO admin_keys (id, creation_date) VALUES(?, datetime('now', 'localtime'));""",
+                                (str(uuid.uuid4()),))
+            self.cursor.execute("""SELECT id, max(creation_date) FROM admin_keys""")
+            return self.cursor.fetchone()[0]
+
+    def addadmin(self, key, username):
+        with self.connection:
+            self.cursor.execute(
+                """SELECT id FROM admin_keys  WHERE id = ? AND activation_date IS NULL;""",
+                (key,))
+            check = self.cursor.fetchone()
+            if check:
+                self.cursor.execute(
+                    """UPDATE admin_keys SET user_id = ?, activation_date = datetime('now', 'localtime') WHERE id = ?;""",
+                    (self.uid, key, ))
+
+                self.cursor.execute(
+                    """ INSERT
+                        INTO settings (name, value, group_id)
+                        VALUES
+                        ('REJECT_REQUEST', 10, ?),
+                        ('COMPLITE_PROMISE', 10, ?),
+                        ('BREAK_PROMISE', 10, ?)""",
+                        (self.uid, self.uid, self.uid, ))
+                self.cursor.execute(
+                    """ INSERT
+                        INTO users (id, group_id)
+                        VALUES
+                        (?, ?)""",
+                    (self.uid, self.uid, ))
+                self.cursor.execute(
+                    """ INSERT
+                        INTO users_stat (id, username)
+                        VALUES
+                        (?, ?)""",
+                    (self.uid, username,))
+                return True
+            else:
+                return False
+
+    def adduser(self, key, username):
+        print (username)
+        with self.connection:
+            self.cursor.execute(
+                """SELECT group_id FROM users WHERE group_id = ?;""",
+                (key,))
+            check = self.cursor.fetchone()
+            if check:
+                self.cursor.execute(
+                    """ INSERT
+                        INTO users (id, group_id)
+                        VALUES
+                        (?, ?)""",
+                    (self.uid, key,))
+                self.cursor.execute(
+                    """ INSERT
+                        INTO users_stat (id, username)
+                        VALUES
+                        (?, ?)""",
+                    (self.uid, username,))
+                return True
+            else:
+                return False
+
+    def setusername(self, username):
+        with self.connection:
+            self.cursor.execute(
+                """UPDATE users_stat SET username = ? WHERE id = ?""",
+                (username, self.uid, ))
 
 
 if __name__ == '__main__':
     user = Botuser('556047985')
     promiseid='2a3e4970-f9bc-41ce-942c-00d34b76b796'
-    print(user.resetstatistics())
+    print(user.getnewkey())

@@ -48,5 +48,57 @@ def promisehandlerfin(bot, call, action, promiseid):
         bot.send_message(chat_id=promisesender, text=sendmessagetext)
 
 
-def getsimlpepromiselist (type):
-    pass
+def choosepromiselisttype (bot, message):
+    user = Botuser(message.chat.id)
+    keyboard = keyboardhelper.getchoosepromisetypekeyboard()
+    bot.send_message(chat_id=message.chat.id, text='Выберите обещания', reply_markup=keyboard)
+
+
+def getpromiselist(bot, call, promisetype):
+    user = Botuser(call.message.chat.id)
+    print (promisetype)
+    if promisetype == 'promiseme':
+        promiselist = user.getactivepromisesme()
+        #id, request_text, promise_text, promise_date, user_id_give
+        sendmessage = 'Обещания мне\n'
+    elif promisetype == 'promisemy':
+        promiselist = user.getactivepromisesmy()
+        #id, request_text, promise_text, promise_date, user_id_get
+        sendmessage = 'Я обещал:\n'
+    elif promisetype == 'request':
+        promiselist = user.getununsweredrequestsme()
+        keyboard = keyboardhelper.getemptyinlinekeyboard()
+        #id, request_text, promise_text, promise_date, user_id_give
+        sendmessage = 'Неотвеченные запрос\n'
+
+    if promiselist:
+        i = 1
+        for promise in promiselist:
+            if promisetype == 'request':
+                promisetext = promise[1]
+            else:
+                promisetext = promise[2]
+
+            try:
+                promisedate = datetime.datetime.strptime(promise[3], '%Y-%m-%d %H:%M:%S').strftime("%d.%m.%Y")
+            except ValueError:
+                promisedate = promise[3]
+
+            sendmessage = sendmessage + '\n{}. {}\nДата выполнения: {}'.format(i, promisetext, promisedate)
+
+            if promisetype == 'request':
+                keyboard.add(keyboardhelper.getpromsieinlinebutton('delete', promise[0], i))
+            i += 1
+        if promisetype == 'request':
+            sendmessage = sendmessage + '\n\nВыберите номер запроса для удаления'
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=sendmessage, reply_markup=keyboard)
+        else:
+            bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=sendmessage)
+    else:
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Ничего нет')
+
+
+def promisecancel(bot, call, promiseid):
+    user = Botuser(call.message.chat.id)
+    user.promisecancel(promiseid)
+    getpromiselist(bot, call, 'request')

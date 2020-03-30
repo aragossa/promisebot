@@ -32,7 +32,7 @@ def getgroupusersinlinekeyboard(uid):
         username = curruser.get('username')
         if curruser.get('id') == user.uid:
             username = 'Себе'
-        keyboard.add(types.InlineKeyboardButton(text=username, callback_data=('select_{}'.format (curruser.get('id')))))
+        keyboard.add(types.InlineKeyboardButton(text=username, callback_data=('select_{}'.format(curruser.get('id')))))
     return keyboard
 
 
@@ -66,4 +66,13 @@ def getsettingskeyboard():
     btn3 = types.InlineKeyboardButton(text='BREAK_PROMISE', callback_data='new_BREAK_PROMISE')
     btn4 = types.InlineKeyboardButton(text='Обнуление статистики', callback_data='reset')
     keyboard.add(btn1, btn2, btn3, btn4)
+    return keyboard
+
+
+def getchoosepromisetypekeyboard():
+    keyboard = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton(text='Мои', callback_data='getlist_promisemy')
+    btn2 = types.InlineKeyboardButton(text='Мне', callback_data='getlist_promiseme')
+    btn3 = types.InlineKeyboardButton(text='Неотвеченные', callback_data='getlist_request')
+    keyboard.add(btn1, btn2, btn3)
     return keyboard

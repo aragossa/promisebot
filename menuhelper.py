@@ -33,6 +33,7 @@ def textmessagehandle(bot, message):
             promisehelper.promisehandler(bot=bot, message=message, action='promise_break')
         elif message.text == 'Актуальные обещания':
             user.resetuserstate()
+            promisehelper.choosepromiselisttype(bot=bot, message=message)
         elif message.text == 'Монитор':
             user.resetuserstate()
             monitorhelper.monitor(bot=bot, message=message)
