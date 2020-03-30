@@ -1,12 +1,21 @@
 import datetime
 
+import likeshelper
 import monitorhelper
 import settingshelper
 from keyboardhelper import getmainmenukeyboard
 from dbconnector import Botuser
 import requesthelper, promisehelper
 
-activeusersstate = ['REQUEST_INPUT', 'REQUEST_INPUT_DATE', 'REQUEST_INPUT_DATE_INPUT','PROMISE_INPUT', 'REJECT_REQUEST', 'COMPLITE_PROMISE', 'BREAK_PROMISE']
+activeusersstate = ['REQUEST_INPUT',
+                    'REQUEST_INPUT_DATE',
+                    'REQUEST_INPUT_DATE_INPUT',
+                    'PROMISE_INPUT',
+                    'REJECT_REQUEST',
+                    'COMPLITE_PROMISE',
+                    'BREAK_PROMISE',
+                    'SEND_LIKE',
+                    'SEND_DISLIKE']
 
 
 def sendmainmenu(bot, uid):
@@ -24,7 +33,11 @@ def textmessagehandle(bot, message):
     if user.isauthorized():
         if message.text == 'Запрос обещания':
             user.resetuserstate()
-            requesthelper.senduserlist(bot=bot, message=message)
+            requesthelper.requesthandler(bot=bot, message=message)
+        elif message.text == '👍': # like
+            likeshelper.likeshandler (bot=bot, message=message, action='like')
+        elif message.text == '👎': # dislike
+            likeshelper.likeshandler (bot=bot, message=message, action='dislike')
         elif message.text == 'Подтвердить выполнение':
             user.resetuserstate()
             promisehelper.promisehandler(bot=bot, message=message, action='promise_accept')
@@ -64,6 +77,7 @@ def inputvaluehandler(bot, user, value):
         bot.send_message (chat_id=user.uid, text='Введите дату (в формате ДД.ММ.ГГГГ)')
         user.updateuserstate('REQUEST_INPUT_DATE_INPUT')
 
+
     elif user.getuserstate() == 'REQUEST_INPUT_DATE_INPUT':
         requestid = user.getlastrequest()
         selecteduser = user.getuserselecteduser()
@@ -85,25 +99,31 @@ def inputvaluehandler(bot, user, value):
             bot.send_message(chat_id=user.uid, text='Неправильный формат даты. Введите дату (в формате ДД.ММ.ГГГГ)')
             user.updateuserstate('REQUEST_INPUT_DATE_INPUT')
 
+
     elif user.getuserstate() == 'PROMISE_INPUT':
         requesthelper.promiseinput(bot=bot, user=user, value=value)
         user.resetuserstate()
 
-    elif user.getuserstate() == 'REJECT_REQUEST':
-        print (user.getuserstate())
-        print (value)
-        user.updatesetting(parameter='REJECT_REQUEST', value=value)
+
+    elif user.getuserstate() == 'PROMISE_INPUT':
+        requesthelper.promiseinput(bot=bot, user=user, value=value)
         user.resetuserstate()
 
+
+    elif user.getuserstate() == 'SEND_LIKE':
+        likeshelper.sendlikes (bot=bot, user=user, value=value)
+
+
+    elif user.getuserstate() == 'SEND_DISLIKE':
+        likeshelper.sendlikes(bot=bot, user=user, value=value)
+
+
     elif user.getuserstate() == 'COMPLITE_PROMISE':
-        print(user.getuserstate())
-        print(value)
         user.updatesetting(parameter='COMPLITE_PROMISE', value=value)
         user.resetuserstate()
 
+
     elif user.getuserstate() == 'BREAK_PROMISE':
-        print(user.getuserstate())
-        print(value)
         user.updatesetting(parameter='BREAK_PROMISE', value=value)
         user.resetuserstate()
 

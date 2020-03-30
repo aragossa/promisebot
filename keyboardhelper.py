@@ -12,15 +12,17 @@ def getpromsieinlinebutton(action, promiseid, text):
 def getmainmenukeyboard(usertype):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton(text='Запрос обещания')
-    btn2 = types.KeyboardButton(text='Подтвердить выполнение')
-    btn3 = types.KeyboardButton(text='Зафиксировать невыполнение')
-    btn4 = types.KeyboardButton(text='Актуальные обещания')
-    btn5 = types.KeyboardButton(text='Монитор')
+    btn2 = types.KeyboardButton(text='👍')
+    btn3 = types.KeyboardButton(text='👎')
+    btn4 = types.KeyboardButton(text='Подтвердить выполнение')
+    btn5 = types.KeyboardButton(text='Зафиксировать невыполнение')
+    btn6 = types.KeyboardButton(text='Актуальные обещания')
+    btn7 = types.KeyboardButton(text='Монитор')
     if usertype == 'admin':
-        btn6 = types.KeyboardButton('Настройки')
-        keyboard.add(btn1, btn2, btn3, btn4, btn5, btn6)
+        btn8 = types.KeyboardButton('Настройки')
+        keyboard.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8)
     else:
-        keyboard.add(btn1, btn2, btn3, btn4, btn5)
+        keyboard.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7)
     return keyboard
 
 

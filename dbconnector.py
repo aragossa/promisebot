@@ -370,7 +370,24 @@ class Botuser():
                 (username, self.uid, ))
 
 
+    def sendlikes(self, userstate, selecteduser, value):
+        with self.connection:
+            print (userstate)
+            if userstate == 'SEND_LIKE':
+                self.cursor.execute(
+                    """UPDATE users_stat SET likes = likes + 1 WHERE id = ?""",
+                    (selecteduser, ))
+            elif userstate == 'SEND_DISLIKE':
+                self.cursor.execute("""UPDATE users_stat SET dislikes = dislikes + 1 WHERE id = ?""",
+                (selecteduser,))
+            self.cursor.execute(
+                """INSERT INTO likes
+                    (user_id_give, user_id_get, reason, creation_date, "type")
+                    VALUES(?, ?, ?, datetime('now', 'localtime'), ?);""",
+                (self.uid, selecteduser, value, userstate.replace('SEND_', '')))
+
+
 if __name__ == '__main__':
     user = Botuser('556047985')
     promiseid='2a3e4970-f9bc-41ce-942c-00d34b76b796'
-    print(user.getnewkey())
+    print(user.sendlikes(userstate='SEND_DISLIKES', selecteduser='796462456', value='tetsvalue'))

@@ -5,18 +5,26 @@ from keyboardhelper import getrecipientrequestkeyboard, getgroupusersinlinekeybo
     getdateinlinekeyboard
 
 
+def requesthandler(bot, message):
+    user = Botuser (message.chat.id)
+    user.updateuserstate(newstate='REQUEST_INPUT')
+    senduserlist(bot=bot, message=message)
+
 def senduserlist(bot, message):
     keyboard = getgroupusersinlinekeyboard(message.chat.id)
     bot.send_message(chat_id=message.chat.id, text='Выберите пользователя', reply_markup=keyboard)
 
 
-def sendmessagetoinputvalue(bot, call, newstate, selecteduser=None):
+def sendmessagetoinputvalue(bot, call,  selecteduser=None):
     user = Botuser(call.message.chat.id)
-    user.updateuserstate(newstate=newstate)
     if selecteduser:
         user.updateselecteduser(selecteduser)
-    keyboard=getnodateinlinekeyboard()
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Введите запрос', reply_markup=keyboard)
+    userstate = user.getuserstate()
+    if userstate == 'REQUEST_INPUT' or userstate == 'REQUEST_INPUT_DATE':
+        keyboard=getnodateinlinekeyboard()
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Введите запрос', reply_markup=keyboard)
+    elif userstate == 'SEND_LIKE' or userstate == 'SEND_DISLIKE':
+        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Укажите причину')
 
 
 def changerequestdatestate(bot, call):
