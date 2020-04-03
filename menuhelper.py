@@ -68,7 +68,7 @@ def inputvaluehandler(bot, user, value):
     if user.getuserstate() == 'REQUEST_INPUT':
         selecteduser = user.getuserselecteduser()
         requestid = user.insertrequest(request=value, selecteduser=selecteduser)
-        requesthelper.sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid)
+        requesthelper.sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid, act_user=user)
         user.resetuserstate()
 
     elif user.getuserstate() == 'REQUEST_INPUT_DATE':
@@ -86,12 +86,12 @@ def inputvaluehandler(bot, user, value):
                 promisedate = datetime.datetime.strptime(value, '%d.%m.%Y') + datetime.timedelta(hours=12)
                 user.updaterequestdate(promiseid=requestid, promisedate=promisedate)
                 user.resetuserstate()
-                requesthelper.sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid)
+                requesthelper.sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid, act_user=user)
             elif len(value) == 8:
                 promisedate = datetime.datetime.strptime(value, '%d.%m.%y') + datetime.timedelta(hours=12)
                 user.updaterequestdate(promiseid=requestid, promisedate=promisedate)
                 user.resetuserstate()
-                requesthelper.sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid)
+                requesthelper.sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid, act_user=user)
             else:
                 bot.send_message(chat_id=user.uid, text='Неправильный формат даты. Введите дату (в формате ДД.ММ.ГГГГ)')
                 user.updateuserstate('REQUEST_INPUT_DATE_INPUT')

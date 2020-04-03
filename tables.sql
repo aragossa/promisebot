@@ -22,8 +22,8 @@ CREATE TABLE likes (
 	user_id_give INTEGER,
 	user_id_get INTEGER,
 	reason TEXT,
-	creation_date TEXT
-, "type" TEXT);
+	creation_date TEXT,
+	"type" TEXT);
 
 -- promises definition
 

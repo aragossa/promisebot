@@ -16,10 +16,12 @@ def sendlikes(bot, user, value):
     selecteduser = user.getuserselecteduser()
     user.sendlikes (userstate, selecteduser, value)
     username = user.getusername()
+    selectedusername = Botuser(selecteduser).getusername()
     if userstate == 'SEND_LIKE':
-        sendmessage = 'Лайк'
+        sendmessage = '👍'
     elif userstate == 'SEND_DISLIKE':
-        sendmessage = 'Дизлайк'
-    sendmessage = sendmessage + ' от {} за {}'.format(username, value)
-    bot.send_message(selecteduser, text=sendmessage)
+        sendmessage = '👎'
+    sendmessage = sendmessage + '\nот: {}\nкому: {}\n за {}'.format(username, selectedusername, value)
+    for curuser in user.getgroupusers():
+        bot.send_message(chat_id=curuser.get('id'), text=sendmessage)
     user.resetuserstate()

@@ -19,9 +19,10 @@ def promisehandler(bot, message, action):
                 promisedate = datetime.datetime.strptime(promise[3], '%Y-%m-%d %H:%M:%S').strftime("%d.%m.%Y")
             except ValueError:
                 promisedate = promise[3]
-            promisesender = promise[4]
+            promisesender = Botuser(promise[4])
+            promisesendername = promisesender.getusername()
             keyboard.add (keyboardhelper.getpromsieinlinebutton(text=i, promiseid=promise_id, action=action))
-            sendmessage = sendmessage + """\n{}. {}\nДата обещания: {}""".format(i, promisetext, promisedate)
+            sendmessage = sendmessage + """\n{}. {}\nОт: {}\nДата обещания: {}""".format(i, promisetext, promisesendername, promisedate)
             i += 1
         bot.send_message (chat_id=message.chat.id, text=sendmessage, reply_markup=keyboard)
     else:
@@ -40,7 +41,7 @@ def promisehandlerfin(bot, call, action, promiseid):
         actiontomessage = 'выполнено'
     elif action == 'break':
         actiontomessage = 'нарушено'
-    promisesender = promisedata[3]
+    promisesender = promisedata[4]
     sendmessagetext = ('Обещание {}\n{}\nДата обещания: {}'.format(actiontomessage, promisetext, promisedate))
     user.promisefin (promiseid=promiseid, action=action)
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=sendmessagetext)
@@ -69,7 +70,7 @@ def getpromiselist(bot, call, promisetype):
         promiselist = user.getununsweredrequestsme()
         keyboard = keyboardhelper.getemptyinlinekeyboard()
         #id, request_text, promise_text, promise_date, user_id_give
-        sendmessage = 'Неотвеченные запрос\n'
+        sendmessage = 'Неотвеченные запросы\n'
 
     if promiselist:
         i = 1
@@ -84,7 +85,16 @@ def getpromiselist(bot, call, promisetype):
             except ValueError:
                 promisedate = promise[3]
 
-            sendmessage = sendmessage + '\n{}. {}\nДата выполнения: {}'.format(i, promisetext, promisedate)
+            promisesender = Botuser(promise[4])
+            promisesendername = promisesender.getusername()
+            if promisetype == 'request' or promisetype == 'promisemy':
+                sendmessage = sendmessage + """\n{}. {}\nКому: {}\nДата обещания: {}""".format(i, promisetext,
+                                                                                         promisesendername, promisedate)
+
+            elif promisetype == 'promiseme':
+                sendmessage = sendmessage + """\n{}. {}\nОт: {}\nДата обещания: {}""".format(i, promisetext,
+                                                                                               promisesendername,
+                                                                                               promisedate)
 
             if promisetype == 'request':
                 keyboard.add(keyboardhelper.getpromsieinlinebutton('delete', promise[0], i))

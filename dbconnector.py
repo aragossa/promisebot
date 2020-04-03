@@ -340,7 +340,6 @@ class Botuser():
                 return False
 
     def adduser(self, key, username):
-        print (username)
         with self.connection:
             self.cursor.execute(
                 """SELECT group_id FROM users WHERE group_id = ?;""",
@@ -372,7 +371,6 @@ class Botuser():
 
     def sendlikes(self, userstate, selecteduser, value):
         with self.connection:
-            print (userstate)
             if userstate == 'SEND_LIKE':
                 self.cursor.execute(
                     """UPDATE users_stat SET likes = likes + 1 WHERE id = ?""",
@@ -390,4 +388,4 @@ class Botuser():
 if __name__ == '__main__':
     user = Botuser('556047985')
     promiseid='2a3e4970-f9bc-41ce-942c-00d34b76b796'
-    print(user.sendlikes(userstate='SEND_DISLIKES', selecteduser='796462456', value='tetsvalue'))
+    print(user.getgroupusers())

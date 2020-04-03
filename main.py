@@ -16,7 +16,8 @@ import menuhelper
 
 resetusersstate()
 logger = telebot.logger
-apihelper.proxy = {'https': 'https://Z6dnQZ:s1Pg8b@77.83.185.165:8000'}
+#apihelper.proxy = {'https': 'https://Z6dnQZ:s1Pg8b@77.83.185.165:8000'}
+
 telebot.logger.setLevel(logging.DEBUG)
 TOKEN = getapitoken()
 bot = telebot.TeleBot(TOKEN, threaded=True)
@@ -24,12 +25,22 @@ bot = telebot.TeleBot(TOKEN, threaded=True)
 
 @bot.message_handler(commands=['makemesudperuser818914bf438e4593928e7c6fcb2eff79'])
 def makesuperuser(m):
-    administration.makemesuperuser(bot=bot, message=m)
+    try:
+        administration.makemesuperuser(bot=bot, message=m)
+    except:
+        traceback.print_exc(file=sys.stdout)
+        bot.send_message(m.chat.id, 'Что-то пошло не так')
 
 
 @bot.message_handler(commands=['keygen'])
 def keygen(m):
-    administration.keygen(bot=bot, message=m)
+    try:
+        administration.keygen(bot=bot, message=m)
+    except:
+        traceback.print_exc(file=sys.stdout)
+        bot.send_message(m.chat.id, 'Что-то пошло не так')
+
+
 
 
 @bot.message_handler(commands=['addadmin'])
@@ -68,6 +79,7 @@ def handlestart(m):
         menuhelper.sendmainmenu(bot=bot, uid=m.chat.id)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(m.chat.id, 'Что-то пошло не так')
 
 
 @bot.message_handler(content_types='text')
@@ -76,6 +88,7 @@ def simpletextmessage(m):
         menuhelper.textmessagehandle(bot=bot, message=m)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(m.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data[:7] == 'select_')
@@ -85,6 +98,7 @@ def sendmessagetoinputvalue(call):
         requesthelper.sendmessagetoinputvalue(bot=bot, call=call, selecteduser=selecteduser)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data[:8] == 'request_')
@@ -97,6 +111,7 @@ def requesthandler(call):
             requesthelper.incomerequesthandler(bot=bot, call=call)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data[:8] == 'promise_')
@@ -107,6 +122,7 @@ def requesthandlerfin(call):
         promisehelper.promisehandlerfin(bot, call, action, promsieid)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data[:4] == 'new_')
@@ -116,6 +132,7 @@ def updatesettings(call):
         settingshelper.updatesetttings(bot=bot, call=call, parameter=parameter)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'reset')
@@ -124,6 +141,7 @@ def resetstatistics(call):
         settingshelper.resetstatistics(bot=bot, call=call)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data[:8] == 'getlist_')
@@ -133,7 +151,7 @@ def choosepromisetype(call):
         promisehelper.getpromiselist(bot=bot, call=call, promisetype=promisetype)
     except:
         traceback.print_exc(file=sys.stdout)
-
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 @bot.callback_query_handler(func=lambda call: call.data[:7] == 'delete_')
 def cancelpromise(call):
@@ -142,12 +160,17 @@ def cancelpromise(call):
         promisehelper.promisecancel(bot=bot, call=call, promiseid=promiseid)
     except:
         traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 @bot.callback_query_handler(func=lambda call: call.data[:6] == 'likes_')
 def cancelpromise(call):
-    action = call.data[6:]
-    likeshelper.likeshandler(bot=bot, call=call, action=action)
+    try:
+        action = call.data[6:]
+        likeshelper.likeshandler(bot=bot, call=call, action=action)
+    except:
+        traceback.print_exc(file=sys.stdout)
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
 
 print('Listerning...')

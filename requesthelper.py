@@ -38,7 +38,7 @@ def changerequestdatestate(bot, call):
         keyboard = getnodateinlinekeyboard()
     bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=keyboard)
 
-def sendrequesttouser(bot, selecteduser, requestid):
+def sendrequesttouser(bot, selecteduser, requestid, act_user):
     user = Botuser(selecteduser)
     requestdata = user.getrequestinfo(requestid=requestid)
     reqesttext = requestdata[0]
@@ -50,6 +50,8 @@ def sendrequesttouser(bot, selecteduser, requestid):
     sendmessagetext = ('Запрос от {0}\n{1}\nДата обещания: {2}'.format (requestsender, reqesttext, reqestdate))
     keyboard = getrecipientrequestkeyboard(requestid=requestid)
     bot.send_message (chat_id=user.uid, text=sendmessagetext, reply_markup=keyboard)
+    if user.uid != act_user.uid:
+        bot.send_message(chat_id=act_user.uid, text='Запрос отправлен')
 
 
 def incomerequesthandler(bot, call):
