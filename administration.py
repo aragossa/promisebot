@@ -10,7 +10,7 @@ def keygen (bot, message):
     user=Botuser(message.chat.id)
     if user.issuperuser():
         newkey = user.getnewkey()
-        bot.send_message(message.chat.id, 'Ключ для подключения: {0}. Пользователю необходимо будет выполнить при открытии чата с ботом (@pocketclerk_bot) команду:\n\n/addadmin {0}'.format(newkey))
+        bot.send_message(message.chat.id, 'Ключ для подключения: {0}. Пользователю необходимо будет выполнить при открытии чата с ботом (@FamilyUsBot) команду:\n\n/addadmin {0}'.format(newkey))
     else:
         bot.send_message(message.chat.id, 'Доступ ограничен')
 
@@ -25,7 +25,7 @@ def addadmin(bot, message, key):
     if check:
         usertype = user.getusertype()
         keyboard = getmainmenukeyboard(usertype=usertype)
-        bot.send_message(message.chat.id, 'Поздравляем, Вы создали группу в боте, для подключения пользователей к Вашей группе в боте (@pocketclerk_bot), используйте команду:\n\n/joingroup {}'.format(user.uid), reply_markup=keyboard)
+        bot.send_message(message.chat.id, 'Поздравляем, Вы создали группу в боте, для подключения пользователей к Вашей группе в боте (@FamilyUsBot), используйте команду:\n\n/joingroup {}'.format(user.uid), reply_markup=keyboard)
     else:
         bot.send_message(message.chat.id, 'Активационный ключ недействительный или уже был активирован')
 
