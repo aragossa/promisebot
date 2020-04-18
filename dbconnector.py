@@ -245,7 +245,8 @@ class Botuser():
             if action == 'accept':
                 promisestatus = 'COMPLITE'
                 self.cursor.execute("""UPDATE users_stat SET trust = trust + (SELECT value FROM settings WHERE name = 
-                'COMPLITE_PROMISE' AND group_id = (SELECT group_id FROM users WHERE id = ?)) WHERE id = ?""",
+                'COMPLITE_PROMISE' AND group_id = (SELECT group_id FROM users WHERE id = ?)) WHERE id = (SELECT 
+                user_id_give FROM promises WHERE id = ?)""",
                                     (self.uid, self.uid,))
             elif action == 'break':
                 promisestatus = 'BREAK'
