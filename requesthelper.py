@@ -6,23 +6,26 @@ from keyboardhelper import getrecipientrequestkeyboard, getgroupusersinlinekeybo
 
 
 def requesthandler(bot, message):
-    user = Botuser (message.chat.id)
+    user = Botuser(message.chat.id)
     user.updateuserstate(newstate='REQUEST_INPUT')
     senduserlist(bot=bot, message=message)
+
 
 def senduserlist(bot, message):
     keyboard = getgroupusersinlinekeyboard(message.chat.id)
     bot.send_message(chat_id=message.chat.id, text='Выберите пользователя', reply_markup=keyboard)
 
 
-def sendmessagetoinputvalue(bot, call,  selecteduser=None):
+def sendmessagetoinputvalue(bot, call, selecteduser=None):
     user = Botuser(call.message.chat.id)
     if selecteduser:
         user.updateselecteduser(selecteduser)
     userstate = user.getuserstate()
     if userstate == 'REQUEST_INPUT' or userstate == 'REQUEST_INPUT_DATE':
-        keyboard=getnodateinlinekeyboard()
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Введите запрос', reply_markup=keyboard)
+        selecteduser = user.getuserselecteduser()
+        requestid = user.insertrequest(request='Не задано', selecteduser=selecteduser)
+        sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid, act_user=user)
+        user.resetuserstate()
     elif userstate == 'SEND_LIKE' or userstate == 'SEND_DISLIKE':
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Укажите причину')
 
@@ -36,7 +39,9 @@ def changerequestdatestate(bot, call):
     elif keyboardtype == 'addate':
         user.updateuserstate('REQUEST_INPUT')
         keyboard = getnodateinlinekeyboard()
-    bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=keyboard)
+    bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                  reply_markup=keyboard)
+
 
 def sendrequesttouser(bot, selecteduser, requestid, act_user):
     user = Botuser(selecteduser)
@@ -47,15 +52,15 @@ def sendrequesttouser(bot, selecteduser, requestid, act_user):
     except ValueError:
         reqestdate = requestdata[2]
     requestsender = Botuser(requestdata[4]).getusername()
-    sendmessagetext = ('Запрос от {0}\n{1}\nДата обещания: {2}'.format (requestsender, reqesttext, reqestdate))
+    sendmessagetext = ('Запрос от {0}\n{1}\nДата обещания: {2}'.format(requestsender, reqesttext, reqestdate))
     keyboard = getrecipientrequestkeyboard(requestid=requestid)
-    bot.send_message (chat_id=user.uid, text=sendmessagetext, reply_markup=keyboard)
+    bot.send_message(chat_id=user.uid, text=sendmessagetext, reply_markup=keyboard)
     if user.uid != act_user.uid:
         bot.send_message(chat_id=act_user.uid, text='Запрос отправлен')
 
 
 def incomerequesthandler(bot, call):
-    user=Botuser(call.message.chat.id)
+    user = Botuser(call.message.chat.id)
     action = call.data[8:14]
     requestid = call.data[15:]
     if action == 'accept':
@@ -92,6 +97,4 @@ def requestreject(user, requestid, call, bot):
     sendtext = ('Отклонен запрос:\n{}'.format(requesttext))
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=sendtext)
     if requestsender != requestrecipient:
-        bot.send_message (chat_id=requestsender, text=sendtext)
-
-
+        bot.send_message(chat_id=requestsender, text=sendtext)
