@@ -13,7 +13,7 @@ import menuhelper
 resetusersstate()
 logging.basicConfig(
     filename='promisebot_exceptions.log',
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = telebot.logger
@@ -29,7 +29,7 @@ def makesuperuser(m):
     try:
         administration.makemesuperuser(bot=bot, message=m)
     except:
-        logging.debug(m)
+        logging.exception(m)
         logging.exception('Got exception on main handler')
         bot.send_message(m.chat.id, 'Что-то пошло не так')
 
@@ -52,7 +52,7 @@ def addadmin(m):
         key = m.text.split()[1]
         administration.addadmin(bot=bot, message=m, key=key)
     except Exception as e:
-        logging.debug(m)
+        logging.exception(m)
         logging.exception('Got exception on main handler')
         bot.send_message(m.chat.id, 'Не указан активационный ключ, обратитесь к администратору')
 
@@ -74,7 +74,7 @@ def setusername(m):
         username = m.text.split()[1]
         administration.setusername(bot=bot, message=m, username=username)
     except:
-        logging.debug(m)
+        logging.exception(m)
         logging.exception('Got exception on main handler')
         bot.send_message(m.chat.id,
                          'Имя пользователя не указано. Используйте команду\n\n/setusername Ваше_Имя_Пользователя ')
@@ -85,7 +85,7 @@ def handlestart(m):
     try:
         menuhelper.sendmainmenu(bot=bot, uid=m.chat.id)
     except:
-        logging.debug(m)
+        logging.exception(m)
         logging.exception('Got exception on main handler')
         bot.send_message(m.chat.id, 'Что-то пошло не так')
 
@@ -95,7 +95,7 @@ def simpletextmessage(m):
     try:
         menuhelper.textmessagehandle(bot=bot, message=m)
     except:
-        logging.debug(m)
+        logging.exception(m)
         logging.exception('Got exception on main handler')
         bot.send_message(m.chat.id, 'Что-то пошло не так')
 
@@ -106,7 +106,7 @@ def sendmessagetoinputvalue(call):
         selecteduser = call.data[7:]
         requesthelper.sendmessagetoinputvalue(bot=bot, call=call, selecteduser=selecteduser)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -120,7 +120,7 @@ def requesthandler(call):
         elif action == 'accept' or action == 'reject':
             requesthelper.incomerequesthandler(bot=bot, call=call)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -132,7 +132,7 @@ def requesthandlerfin(call):
         promsieid = call.data.split('_')[2]
         promisehelper.promisehandlerfin(bot, call, action, promsieid)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -143,7 +143,7 @@ def updatesettings(call):
         parameter = call.data[4:]
         settingshelper.updatesetttings(bot=bot, call=call, parameter=parameter)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -153,7 +153,7 @@ def resetstatistics(call):
     try:
         settingshelper.resetstatistics(bot=bot, call=call)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -164,7 +164,7 @@ def choosepromisetype(call):
         promisetype = call.data[8:]
         promisehelper.getpromiselist(bot=bot, call=call, promisetype=promisetype)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -174,7 +174,7 @@ def cancelpromise(call):
         promiseid = call.data[7:]
         promisehelper.promisecancel(bot=bot, call=call, promiseid=promiseid)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
@@ -185,7 +185,7 @@ def cancelpromise(call):
         action = call.data[6:]
         likeshelper.likeshandler(bot=bot, call=call, action=action)
     except:
-        logging.debug(call)
+        logging.exception(call)
         logging.exception('Got exception on main handler')
         bot.send_message(call.message.chat.id, 'Что-то пошло не так')
 
