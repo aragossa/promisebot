@@ -36,5 +36,6 @@ def likescausehelper(bot, call, action):
         action = 'Правда'
     elif action == 'help':
         action = 'Помощь без просьбы'
+    bot.delete_message (chat_id=call.message.chat.id, message_id=call.message.message_id)
     user = Botuser(call.message.chat.id)
     sendlikes(bot=bot, user=user, value=action)
