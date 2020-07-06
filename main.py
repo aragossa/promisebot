@@ -17,7 +17,6 @@ logging.basicConfig(
     format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S')
 logger = telebot.logger
-#apihelper.proxy = {'https': 'https://Z6dnQZ:s1Pg8b@77.83.185.165:8000'}
 
 telebot.logger.setLevel(logging.INFO)
 TOKEN = getapitoken()
@@ -183,7 +182,18 @@ def cancelpromise(call):
 def cancelpromise(call):
     try:
         action = call.data[6:]
-        likeshelper.likeshandler(bot=bot, call=call, action=action)
+        likeshelper.likeshandler(bot=bot, message=call.message, action=action)
+    except:
+        logging.exception(call)
+        logging.exception('Got exception on main handler')
+        bot.send_message(call.message.chat.id, 'Что-то пошло не так')
+
+
+@bot.callback_query_handler(func=lambda call: call.data[:6] == 'cause_')
+def likescausehandler(call):
+    try:
+        action = call.data[6:]
+        likeshelper.likescausehelper(bot=bot, call=call, action=action)
     except:
         logging.exception(call)
         logging.exception('Got exception on main handler')

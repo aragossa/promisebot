@@ -3,10 +3,8 @@ from dbconnector import Botuser
 def monitor(bot, message):
     user = Botuser(message.chat.id)
     groupuserslist = user.getgroupusers()
-    print(groupuserslist)
     sendmessage = ''
     for curruser in groupuserslist:
-        print (curruser)
         curruserstat = user.getuserstat (curruser.get('id'))
         name = curruserstat[4]
         likes = curruserstat[1]

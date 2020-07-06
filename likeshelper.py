@@ -25,3 +25,16 @@ def sendlikes(bot, user, value):
     for curuser in user.getgroupusers():
         bot.send_message(chat_id=curuser.get('id'), text=sendmessage)
     user.resetuserstate()
+
+
+def likescausehelper(bot, call, action):
+    if action == 'lies':
+        action = 'Ложь'
+    elif action == 'prop':
+        action = 'Чужое имущество'
+    elif action == 'true':
+        action = 'Правда'
+    elif action == 'help':
+        action = 'Помощь без просьбы'
+    user = Botuser(call.message.chat.id)
+    sendlikes(bot=bot, user=user, value=action)

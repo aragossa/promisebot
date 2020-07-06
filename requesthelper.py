@@ -2,7 +2,7 @@ from dbconnector import Botuser
 import datetime
 
 from keyboardhelper import getrecipientrequestkeyboard, getgroupusersinlinekeyboard, getnodateinlinekeyboard, \
-    getdateinlinekeyboard
+    getdateinlinekeyboard, selectlikescause, selectdislikescause
 
 
 def requesthandler(bot, message):
@@ -27,7 +27,13 @@ def sendmessagetoinputvalue(bot, call, selecteduser=None):
         sendrequesttouser(bot=bot, selecteduser=selecteduser, requestid=requestid, act_user=user)
         user.resetuserstate()
     elif userstate == 'SEND_LIKE' or userstate == 'SEND_DISLIKE':
+        if userstate == 'SEND_LIKE':
+            keyboard = selectlikescause()
+        elif userstate == 'SEND_DISLIKE':
+            keyboard = selectdislikescause()
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='Укажите причину')
+        bot.edit_message_reply_markup(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                      reply_markup=keyboard)
 
 
 def changerequestdatestate(bot, call):

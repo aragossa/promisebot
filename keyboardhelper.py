@@ -78,3 +78,18 @@ def getchoosepromisetypekeyboard():
     btn3 = types.InlineKeyboardButton(text='Неотвеченные', callback_data='getlist_request')
     keyboard.add(btn1, btn2, btn3)
     return keyboard
+
+def selectdislikescause():
+    keyboard = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton(text='Ложь', callback_data='cause_lies')
+    btn2 = types.InlineKeyboardButton(text='Чужое имущество', callback_data='cause_prop')
+    keyboard.add(btn1, btn2)
+    return keyboard
+
+
+def selectlikescause():
+    keyboard = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton(text='Правда', callback_data='cause_true')
+    btn2 = types.InlineKeyboardButton(text='Помощь без просьбы', callback_data='cause_help')
+    keyboard.add(btn1, btn2)
+    return keyboard
